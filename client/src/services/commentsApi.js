@@ -7,3 +7,18 @@ export function createComment ({ postId, content, parentId }) {
     })
 
 }
+
+export function updateComment ({ postId, content, id }) {
+    return makeRequest(`posts/${postId}/comments/${id}`, {
+        method: 'PUT',
+        data: { content},
+    })
+
+}
+
+export function deleteComment ({ postId, id }) {
+    return makeRequest(`posts/${postId}/comments/${id}`, {
+        method: 'DELETE'
+    })
+
+}

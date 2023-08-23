@@ -9,16 +9,15 @@ import {createComment} from "../services/commentsApi";
 //in order to keep this page tidy and make it easy to debug i have created a context file
 function Post() {
     const {loadingNum, errorNum, valueNum: posts} = useAsync(getPosts)
-    const {post, rootComments} = usePost()
+    const {post, rootComments, createLocalComments} = usePost()
 
     // only using this function on submit thats why i am using the useAsyncFn instead of the normal one
     const {loading, error, execute: createCommentFn} = useAsyncFn(createComment)
 
     function onCommentCreate (content) {
-        return createCommentFn({ postId: post.id, content }).then(comment => {
-            console.log(content)
-            console.log(comment)
-        })
+        // when a comment is created it creates it locally after it has pushed it to the server
+        return createCommentFn({ postId: post.id, content })
+            .then(createLocalComments)
     }
 
     let number = ''
