@@ -5,7 +5,7 @@ import CommentList from "./CommentList";
 import {useState} from "react";
 import CommentForm from "./CommentForm";
 import {useAsyncFn} from "../Hooks/useAsync";
-import {createComment, deleteComment, updateComment} from "../services/commentsApi";
+import {createComment, deleteComment, updateComment, toggleCommentLike} from "../services/commentsApi";
 import useUserName from "../Hooks/useUserName";
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
@@ -27,8 +27,9 @@ function Comment({id, content, user, createdAt, likeCount, likedByMe}) {
     const createCommentFn = useAsyncFn(createComment)
     const updateCommentFn = useAsyncFn(updateComment)
     const deleteCommentFn = useAsyncFn(deleteComment)
+    const toggleLocalCommentLikeFn = useAsyncFn(toggleCommentLike)
 
-    const {post, getReplies, createLocalComments, updateLocalComments, deleteLocalComments} = usePost()
+    const {post, getReplies, createLocalComments, updateLocalComments, deleteLocalComments, toggleLocalCommentLike} = usePost()
 
     // do not forget that we passed the id, post, rootComments & the getReplies function to every child component that renders beneath the
     // context provider, and since the origin of the comment component starts from the post component, the function is available here
@@ -61,6 +62,12 @@ function Comment({id, content, user, createdAt, likeCount, likedByMe}) {
             .then(comment => deleteLocalComments(comment.id))
     }
 
+    function onToggleCommentLike () {
+        return toggleLocalCommentLikeFn
+            .execute({ id, postId: post.id})
+            .then(({ addLike }) => toggleLocalCommentLike(id, addLike))
+    }
+
     return (
         <>
             <div className="comment">
@@ -81,6 +88,8 @@ function Comment({id, content, user, createdAt, likeCount, likedByMe}) {
                 }
                 <div className='footer'>
                     <IconBtn
+                        onClick={onToggleCommentLike}
+                        disabled={toggleLocalCommentLikeFn.loading}
                         Icon={likedByMe ? FaHeart : FaRegHeart}
                         aria-label={ likedByMe ? "Unlike" : "Like"}
                     >

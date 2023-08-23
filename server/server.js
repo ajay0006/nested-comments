@@ -4,7 +4,6 @@ import cors from "@fastify/cors";
 import cookie from '@fastify/cookie'
 import dotenv from "dotenv"
 import {PrismaClient} from "@prisma/client"
-import {re} from "prisma/build/child.js";
 
 dotenv.config()
 

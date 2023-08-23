@@ -2,7 +2,6 @@ import React, {useContext, useEffect, useMemo, useState} from "react";
 import {useAsync} from "../Hooks/useAsync";
 import {getPost} from "../services/postsApi";
 import {useParams} from "react-router-dom";
-import comment from "../Components/Comment";
 // keep in mind i want the posts state to be available to every other component in my application, i dont want to run the useEffect everytime i want the data
 // its like saying i am going to ping the server everytime for every data, including the individual post
 
@@ -70,9 +69,34 @@ function PostProvider({children}) {
 
     }
 
-    function deleteLocalComments (id) {
+    function deleteLocalComments(id) {
         setComments(prevComments => {
             return prevComments.filter(comment => comment.id !== id)
+        })
+
+    }
+
+    function toggleLocalCommentLike(id, addLike) {
+        setComments(prevComments => {
+            return prevComments.map(comment => {
+                if (id === comment.id) {
+                    if (addLike) {
+                        return {
+                            ...comment,
+                            likeCount: comment.likeCount + 1,
+                            likedByMe: true,
+                        }
+                    } else {
+                        return {
+                            ...comment,
+                            likeCount: comment.likeCount - 1,
+                            likedByMe: false,
+                        }
+                    }
+                } else {
+                    return comment
+                }
+            })
         })
 
     }
@@ -84,6 +108,7 @@ function PostProvider({children}) {
             createLocalComments,
             updateLocalComments,
             deleteLocalComments,
+            toggleLocalCommentLike,
             rootComments: commentsByParentId[null],
         }}>
             {loading ? <h1>Loading ... </h1>
