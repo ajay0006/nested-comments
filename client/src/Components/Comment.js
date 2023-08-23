@@ -1,5 +1,5 @@
 import IconBtn from "./IconBtn";
-import {FaHeart, FaEdit, FaReply, FaTrash} from "react-icons/fa";
+import {FaHeart, FaEdit, FaReply, FaTrash, FaRegHeart} from "react-icons/fa";
 import {usePost} from "../Context/PostContext";
 import CommentList from "./CommentList";
 import {useState} from "react";
@@ -13,7 +13,7 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
     timeStyle: "short"
 })
 
-function Comment({id, content, user, createdAt}) {
+function Comment({id, content, user, createdAt, likeCount, likedByMe}) {
     // keep in mind by default we will only be able to render the root comments
     // to be able to render the child comments we have to get them, keep in mind that even though root comments and child comments are
     // the same object, what differentiates them is that child comments are replies
@@ -80,8 +80,11 @@ function Comment({id, content, user, createdAt}) {
                         : <div className='message'> {content} </div>
                 }
                 <div className='footer'>
-                    <IconBtn Icon={FaHeart} aria-label="Like">
-                        2
+                    <IconBtn
+                        Icon={likedByMe ? FaHeart : FaRegHeart}
+                        aria-label={ likedByMe ? "Unlike" : "Like"}
+                    >
+                        {likeCount}
                     </IconBtn>
                     <IconBtn
                         onClick={() => setIsReplying(prev => !prev)}

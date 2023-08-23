@@ -76,19 +76,19 @@ app.get('/posts/:id', async (req, res) => {
             const likes = await prisma.like.findMany({
                 where: {
                     userId: req.cookies.userId,
-                    commentId: {in: post.comments.map(comment => comment.id)}
-                }
+                    commentId: { in: post.comments.map(comment => comment.id)},
+                },
             })
             return {
                 ...post,
                 comments: post.comments.map(comment => {
-                    const {_count, ...commentFields} = comment
+                    const { _count, ...commentFields} = comment
                     return {
                         ...commentFields,
                         likedByMe: likes.find(like => like.commentId === comment.id),
-                        likeCount: _count.likes
+                        likeCount: _count.likes,
                     }
-                })
+                }),
             }
         })
     )
@@ -111,7 +111,7 @@ app.post('/posts/:id/comments', async (req, res) => {
             return {
                 ...comment,
                 likeCount: 0,
-                likedByMe: false
+                likedByMe: false,
             }
         })
     )
